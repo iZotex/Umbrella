@@ -17,7 +17,7 @@ function TeamBottle.OnUpdate()
 			if sameTeam and hero ~= myHero then
 				if NPC.IsPositionInRange(myHero,Entity.GetAbsOrigin(hero), 600, 0) then
 					if not NPC.HasModifier(hero, "modifier_bottle_regeneration") then 
-                     Ability.CastTarget(Bottle,hero,1)					
+                     Ability.CastTarget(Bottle,hero)					
 						
 					end
 					
@@ -27,4 +27,4 @@ function TeamBottle.OnUpdate()
 	end
 end
 
-return TeamBottle	
+return TeamBottle
