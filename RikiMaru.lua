@@ -19,6 +19,7 @@ RikiMaru.optionEnableNullifier = Menu.AddOptionBool({"Hero Specific","Riki","6. 
 RikiMaru.optionEnableUrn = Menu.AddOptionBool({"Hero Specific","Riki","6. Items"},"7. Use Urn on Target","Turn On/Off Urn in Combo")
 RikiMaru.optionEnableVessel = Menu.AddOptionBool({"Hero Specific","Riki","6. Items"},"8. Use Vessel on Target","Turn On/Off Vessel in Combo")
 RikiMaru.optionEnableBlood = Menu.AddOptionBool({"Hero Specific","Riki","6. Items"},"9. Bloodhorn","in Combo")
+RikiMaru.optionEnableOrchid = Menu.AddOptionBool({"Hero Specific","Riki","6. Items"},"10. Orchid","in Combo")
 
 
 RikiMaru.lastAttackTime = 0
@@ -281,7 +282,8 @@ if not Menu.IsKeyDown(RikiMaru.optionKey) then return end
     local Nullifier = NPC.GetItem(myHero, "item_nullifier", true)
     local Urn = NPC.GetItem(myHero, "item_urn_of_shadows", true)
     local Vessel = NPC.GetItem(myHero, "item_spirit_vessel", true)
-	local Blood = NPC.GetItem(myHero, "item_bloodthorn", true)
+    local Blood = NPC.GetItem(myHero, "item_bloodthorn", true)
+    local Orchid = NPC.GetItem(myHero, "item_orchid", true)
     
     --Ability Ranges--
     local SmokeRange = 550
@@ -297,6 +299,7 @@ if not Menu.IsKeyDown(RikiMaru.optionKey) then return end
   	local UrnRange = 950
   	local VesselRange = 950
 	local BloodRange = 900
+	local OrchidRange = 900
   	
   	--Talent Tree Bonus Range-- 	
   	local TalentBonusRange = NPC.GetAbility(myHero, "special_bonus_unique_riki_3")
@@ -348,6 +351,10 @@ if not Menu.IsKeyDown(RikiMaru.optionKey) then return end
 	
 	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
 	and Blood and Menu.IsEnabled(RikiMaru.optionEnableBlood) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Blood, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), BloodRange) then Ability.CastTarget(Blood, enemy) return
+	end
+		
+	if enemy and Utility.CanCastSpellOn(enemy) and not NPC.IsIllusion(enemy)
+	and Orchid and Menu.IsEnabled(RikiMaru.optionEnableOrchid) and not Ability.IsChannelling(Ult) and Ability.IsCastable(Orchid, mana) and NPC.IsPositionInRange(myHero, Entity.GetAbsOrigin(enemy), OrchidRange) then Ability.CastTarget(Orchid, enemy) return
 	end
 	
 	if enemy and NPC.IsAttacking(myHero) and not Entity.IsDormant(enemy) and not NPC.HasState(enemy, Enum.ModifierState.MODIFIER_STATE_INVULNERABLE) and Ult and Ability.IsReady(Ult) and Menu.IsEnabled(RikiMaru.optionEnableUlt) and Ability.IsCastable(Ult, mana) then
