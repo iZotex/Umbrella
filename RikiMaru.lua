@@ -103,7 +103,7 @@ end
 function RikiMaru.Debugger(time, npc, ability, order)
 
 	if not Menu.IsEnabled(RikiMaru.optionEnable) then return end
-	Log.Write(tostring(time) .. " " .. tostring(NPC.GetUnitName(npc)) .. " " .. tostring(ability) .. " " .. tostring(order))
+	--Log.Write(tostring(time) .. " " .. tostring(NPC.GetUnitName(npc)) .. " " .. tostring(ability) .. " " .. tostring(order))
 end
 
 function RikiMaru.GenericMainAttack(myHero, attackType, target, position)
