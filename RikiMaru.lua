@@ -22,8 +22,226 @@ RikiMaru.optionEnableBlood = Menu.AddOptionBool({"Hero Specific","Riki","6. Item
 RikiMaru.optionEnableOrchid = Menu.AddOptionBool({"Hero Specific","Riki","6. Items"},"10. Orchid","in Combo")
 
 -- Checked --
-RikiMaru.IsKiLLChecked = Menu.AddOptionBool({"Hero Specific", "Riki"}, "Check", false)
-RikiMaru.CheckToggleKey = Menu.AddKeyOption({"Hero Specific", "Riki"}, "Check Toggle Key", Enum.ButtonCode.KEY_Z)
+RikiMaru.IsToggled = Menu.AddOptionBool({"Hero Specific", "Riki"}, "Check", false)
+RikiMaru.EZTogglerKey = Menu.AddKeyOption({"Hero Specific", "Riki"}, "Check Toggle Key", Enum.ButtonCode.KEY_Z)
+
+targetParticle = 0
+cshotParticle = 0
+cshotParticleEnemy = nil
+
+IsEZKillable = false
+lastCheckTime = 0
+FarPredict = 390					
+DoubleMFRootedPredict = 610		
+DoubleMFUnrootedPredict = 750		
+CloseInPredict = 300	
+Font = Renderer.LoadFont("Tahoma", 18, Enum.FontWeight.BOLD)			
+
+function RikiMaru.OnGameStart()
+	lastCheckTime = 0
+	targetParticle = 0
+	cshotParticle = 0
+	cshotParticleEnemy = nil
+end
+
+function RikiMaru.OnGameEnd()
+	lastCheckTime = 0
+	targetParticle = 0
+	cshotParticle = 0
+	cshotParticleEnemy = nil
+	myHero = nil
+	enemy = nil
+end
+
+
+function RikiMaru.OnUpdate()
+	if not Engine.IsInGame() or Heroes.GetLocal() == nil or not GameRules.GetGameState() == 5 or not Menu.IsEnabled(RikiMaru.IsToggled) or GameRules.IsPaused() then return
+	end
+	myHero = Heroes.GetLocal()
+	if NPC.GetUnitName(myHero) ~= "npc_dota_hero_riki" or not Entity.IsAlive(myHero) then
+		return
+	end
+	if Menu.IsKeyDownOnce(RikiMaru.EZTogglerKey) then
+		if Menu.IsEnabled(RikiMaru.IsEZKChecked) then
+			Menu.SetEnabled(RikiMaru.IsEZKChecked, false)
+		else Menu.SetEnabled(RikiMaru.IsEZKChecked, true)
+		end		
+	end
+	myPlayer = Players.GetLocal()	
+	enemy = Input.GetNearestHeroToCursor(Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
+	if Menu.IsEnabled(RikiMaru.IsBlinkStrikeParticleEnabled) then	
+		RikiMaru.GetBlinkStrikeEnemy()
+	end 
+	RikiMaru.PrayToDog()
+	RikiMaru.ArcaneHarras()
+end
+
+function RikiMaru.BlinkStrike()
+	BlinkStrike = nil
+	local BlinkStrike = NPC.GetAbility(myHero, "riki_blink_strike")
+	if not BlinkStrike then return end
+	local heroes = Heroes.InRadius(Entity.GetAbsOrigin(myHero), Ability.GetCastRange(BlinkStrike), Entity.GetTeamNum(myHero), Enum.TeamType.TEAM_ENEMY)
+	if not heroes then return end
+	if BlinkStrike and heroes then			
+		local compDistance = Ability.GetCastRange(BlinkStrike)
+		for k, v in pairs(heroes) do
+			local curHero = heroes[k]
+			local distance = Entity.GetAbsOrigin(curHero):Distance(Entity.GetAbsOrigin(myHero)):Length2D()
+			if distance < compDistance then
+				BlinkStrike = curHero
+				compDistance = distance
+			end			
+		end
+	end		
+end
+
+
+function RikiMaru.OnDraw()
+	if not Heroes.GetLocal() then return end
+	if myHero == nil or NPC.GetUnitName(myHero) ~= "npc_dota_hero_riki" or not Entity.IsAlive(myHero) then
+		if targetParticle ~= 0 then
+			Particle.Destroy(targetParticle)			
+			targetParticle = 0
+			particleEnemy = enemy
+		end
+		if cshotParticle ~= 0 then
+			Particle.Destroy(BlinkStrikeParticle)			
+			BlinkStrikeParticle = 0
+		end
+		return
+	end
+	local ezKillMode
+	local x, y = Renderer.GetScreenSize()
+	if x == 1920 and y == 1080 then
+		x, y = 1150, 910
+	elseif x== 1600 and y == 900 then
+		x, y = 950, 755
+	elseif x== 1366 and y == 768 then
+		x, y = 805, 643
+	elseif x==1280 and y == 720 then
+		x, y = 752, 600
+	elseif x==1280 and y == 1024 then
+		x, y = 800, 860
+	elseif x==1440 and y == 900 then
+		x, y = 870, 755
+	elseif x== 1680 and y == 1050 then
+		x, y = 1025, 885
+	end
+	if Menu.IsEnabled(RikiMaru.IsEZKChecked) then
+		Renderer.SetDrawColor(90, 255, 100)
+		ezKillMode = "ON"		
+	else
+		Renderer.SetDrawColor(255, 90, 100)
+		ezKillMode = "OFF"
+	end
+	Renderer.DrawText(Font, x, y, "[EZ KILL: "..ezKillMode.."]")
+	local particleEnemy = enemy
+	if Menu.IsEnabled(RikiMaru.IsTargetParticleEnabled) then	
+		if not particleEnemy or(not NPC.IsPositionInRange(enemy, Input.GetWorldCursorPos(), Menu.GetValue(RikiMaru.enemyInRange), 0) and targetParticle ~= 0) or enemy ~= particleEnemy then
+			Particle.Destroy(targetParticle)			
+			targetParticle = 0
+			particleEnemy = enemy
+		else
+			if targetParticle == 0 and NPC.IsPositionInRange(enemy, Input.GetWorldCursorPos(), Menu.GetValue(RikiMaru.enemyInRange), 0) then
+				targetParticle = Particle.Create("particles/ui_mouseactions/range_finder_tower_aoe.vpcf", Enum.ParticleAttachment.PATTACH_INVALID, enemy)				
+			end
+			if targetParticle ~= 0 then
+				Particle.SetControlPoint(targetParticle, 2, Entity.GetOrigin(myHero))
+				Particle.SetControlPoint(targetParticle, 6, Vector(1, 0, 0))
+				Particle.SetControlPoint(targetParticle, 7, Entity.GetOrigin(enemy))
+			end
+		end
+	else 
+		if targetParticle ~= 0 then
+			Particle.Destroy(targetParticle)			
+			targetParticle = 0
+		end
+	end
+
+	local BlinkStrike = NPC.GetAbility(myHero, "BlinkStrike")
+	if Menu.IsEnabled(RikiMaru.IsBlinkStrikeParticleEnabled) then	
+		if not Ability.IsReady(BlinkStrike) or(not BlinkStrikeenemy and BlinkStrikeParticle ~= 0) or BlinkStrikeenemy ~= BlinkStrikeParticleEnemy then
+			Particle.Destroy(BlinkStrikeParticle)			
+			BlinkStrikeParticle = 0
+			BlinkStrikeParticleEnemy = BlinkStrikeenemy
+		else
+			if Ability.IsReady(BlinkStrike) and BlinkStrikeParticle == 0 and BlinkStrikeenemy then				
+				BlinkStrikeParticle = Particle.Create("particles/units/heroes/hero_riki/riki_Blink_Strike.vpcf")
+			end
+			if BlinkStrikeParticle ~= 0 then
+				local customOrigin = Entity.GetAbsOrigin(BlinkStrikeenemy)
+				local zOrigin = customOrigin:GetZ()
+				customOrigin:SetZ(zOrigin + 310)
+				Particle.SetControlPoint(cshotParticle, 0, customOrigin)
+				Particle.SetControlPoint(cshotParticle, 1, customOrigin)
+				Particle.SetControlPoint(cshotParticle, 2, Vector(500, 0, 0))					
+			end
+		end
+	else 
+		if BlinkStrikeParticle ~= 0 then
+			Particle.Destroy(BlinkStrikeParticle)			
+			BlinkStrikeParticle = 0
+		end
+	end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 RikiMaru.lastAttackTime = 0
