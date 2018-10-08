@@ -22,8 +22,8 @@ RikiMaru.optionEnableBlood = Menu.AddOptionBool({"Hero Specific","Riki","6. Item
 RikiMaru.optionEnableOrchid = Menu.AddOptionBool({"Hero Specific","Riki","6. Items"},"10. Orchid","in Combo")
 
 -- Checked --
-RikiMaru.IsToggled = Menu.AddOptionBool({"Hero Specific", "Riki"}, "Check", false)
-RikiMaru.EZTogglerKey = Menu.AddKeyOption({"Hero Specific", "Riki"}, "Check Toggle Key", Enum.ButtonCode.KEY_Z)
+RikiMaru.IsEZKChecked = Menu.AddOptionBool({"Hero Specific", "riki"}, "Check for EZ Kill", false)
+RikiMaru.EZTogglerKey = Menu.AddKeyOption({"Hero Specific", "riki"}, "EZ Kill Toggle Key", Enum.ButtonCode.KEY_V)
 
 targetParticle = 0
 cshotParticle = 0
