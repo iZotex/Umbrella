@@ -1,6 +1,6 @@
 local Utility = require("scripts/Utils9")
 local RikiMaru = {}
-Menu.AddMenuIcon({"Hero Specific", "RikiMaru"}, "panorama/images/heroes/icons/npc_dota_hero_riki_png.vtex_c")
+Menu.AddMenuIcon({"Hero Specific", "Riki"}, "panorama/images/heroes/icons/npc_dota_hero_riki_png.vtex_c")
 RikiMaru.optionEnable = Menu.AddOptionBool({"Hero Specific","Riki"}, "1. Enabled", "Enable Or Disable Riki Combo Script")
 RikiMaru.optionKey = Menu.AddKeyOption({"Hero Specific","Riki"}, "2. Combo Key", Enum.ButtonCode.KEY_D)
 RikiMaru.optionEnablePhase = Menu.AddOptionBool({"Hero Specific","Riki"}, "3. Auto Phase Boots", "Enable Or Disable Auto Phase Boots")
@@ -22,8 +22,8 @@ RikiMaru.optionEnableBlood = Menu.AddOptionBool({"Hero Specific","Riki","6. Item
 RikiMaru.optionEnableOrchid = Menu.AddOptionBool({"Hero Specific","Riki","6. Items"},"10. Orchid","in Combo")
 
 -- Checked --
-RikiMaru.IsKiLLChecked = Menu.AddOptionBool({"Hero Specific", "RikiMaru"}, "Check", false)
-RikiMaru.CheckToggleKey = Menu.AddKeyOption({"Hero Specific", "RikiMaru"}, "Check Toggle Key", Enum.ButtonCode.KEY_Z)
+RikiMaru.IsKiLLChecked = Menu.AddOptionBool({"Hero Specific", "Riki"}, "Check", false)
+RikiMaru.CheckToggleKey = Menu.AddKeyOption({"Hero Specific", "Riki"}, "Check Toggle Key", Enum.ButtonCode.KEY_Z)
 
 
 RikiMaru.lastAttackTime = 0
