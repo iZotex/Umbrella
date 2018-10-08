@@ -21,6 +21,10 @@ RikiMaru.optionEnableVessel = Menu.AddOptionBool({"Hero Specific","Riki","6. Ite
 RikiMaru.optionEnableBlood = Menu.AddOptionBool({"Hero Specific","Riki","6. Items"},"9. Bloodhorn","in Combo")
 RikiMaru.optionEnableOrchid = Menu.AddOptionBool({"Hero Specific","Riki","6. Items"},"10. Orchid","in Combo")
 
+-- Checked --
+RikiMaru.IsKiLLChecked = Menu.AddOptionBool({"Hero Specific", "RikiMaru"}, "Check", false)
+RikiMaru.CheckToggleKey = Menu.AddKeyOption({"Hero Specific", "RikiMaru"}, "Check Toggle Key", Enum.ButtonCode.KEY_Z)
+
 
 RikiMaru.lastAttackTime = 0
 RikiMaru.lastAttackTime2 = 0
