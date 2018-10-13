@@ -283,6 +283,7 @@ if not Menu.IsKeyDown(RikiMaru.optionKey) then return end
     local Vessel = NPC.GetItem(myHero, "item_spirit_vessel", true)
     local Blood = NPC.GetItem(myHero, "item_bloodthorn", true)
     local Orchid = NPC.GetItem(myHero, "item_orchid", true)
+    local aghanimScepter = NPC.GetItem(myHero, "item_ultimate_scepter", true)
     
     --Ability Ranges--
     local SmokeRange = 550
@@ -363,6 +364,15 @@ if not Menu.IsKeyDown(RikiMaru.optionKey) then return end
 				Ability.CastNoTarget(Ult)
 			end
 		return end
+		
+		if enemyTarget and rikiUltimate and Ability.IsReady(rikiUltimate) and Ability.IsCastable(rikiUltimate, myMana) then
+			if aghanimScepter then
+				Ability.CastTarget(rikiUltimate, myHero)
+			else
+				Ability.CastNoTarget(rikiUltimate)
+			end
+		return end
+		
 	if Ability.IsInAbilityPhase(Ult) then return end
   	if Ability.IsChannelling(Ult) then return end
 	
